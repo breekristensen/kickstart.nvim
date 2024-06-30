@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -102,7 +102,10 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
+
+-- Display the status column with: sign, relative line number, line number, fold column
+vim.opt.statuscolumn = '%s %2r %l %C '
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -773,6 +776,7 @@ require('lazy').setup({
     end,
   },
 
+  --[[
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -788,6 +792,53 @@ require('lazy').setup({
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
+    end,
+  },
+  --]]
+
+  { -- Use Catppuccin theme
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000, -- Make sure to load this before all the other start plugins.
+    init = function()
+      -- Load the colorscheme here.
+      vim.cmd.colorscheme 'catppuccin-mocha'
+      -- You can configure highlights by doing something like:
+      -- vim.cmd.hi 'Comment gui=none'
+    end,
+  },
+
+  --[[
+  {
+    'freddiehaddad/feline.nvim',
+    after = "catppuccin",
+    opts = {},
+    config = function(_, opts)
+        local ctp_feline = require('catppuccin.groups.integrations.feline')
+
+        ctp_feline.setup()
+        
+        require("feline").setup({
+            components = ctp_feline.get(),
+        })
+        -- require('feline').winbar.setup()       -- to use winbar
+        -- require('feline').statuscolumn.setup() -- to use statuscolumn
+    end,
+  },
+  --]]
+
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {},
+    config = function(_, opts)
+      require('lualine').setup {
+        options = {
+          theme = 'catppuccin-mocha',
+          component_separators = { left = '', right = '' },
+          section_separators = { left = '', right = '' },
+        },
+      }
     end,
   },
 
@@ -863,6 +914,42 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
+  {
+    'alexghergh/nvim-tmux-navigation',
+    config = function()
+      local nvim_tmux_nav = require 'nvim-tmux-navigation'
+
+      nvim_tmux_nav.setup {
+        disable_when_zoomed = true, -- defaults to false
+      }
+
+      vim.keymap.set('n', '<C-h>', nvim_tmux_nav.NvimTmuxNavigateLeft)
+      vim.keymap.set('n', '<C-j>', nvim_tmux_nav.NvimTmuxNavigateDown)
+      vim.keymap.set('n', '<C-k>', nvim_tmux_nav.NvimTmuxNavigateUp)
+      vim.keymap.set('n', '<C-l>', nvim_tmux_nav.NvimTmuxNavigateRight)
+      vim.keymap.set('n', '<C-\\>', nvim_tmux_nav.NvimTmuxNavigateLastActive)
+      vim.keymap.set('n', '<C-Space>', nvim_tmux_nav.NvimTmuxNavigateNext)
+    end,
+  },
+  {
+    'petertriho/nvim-scrollbar',
+    config = function()
+      local colors = require('catppuccin.palettes').get_palette 'mocha'
+
+      require('scrollbar').setup {
+        show = true,
+        handle = {
+          color = colors.overlay1,
+        },
+        handlers = {
+          cursor = false,
+        },
+      }
+
+      require('gitsigns').setup()
+      require('scrollbar.handlers.gitsigns').setup()
+    end,
+  },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -877,7 +964,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`

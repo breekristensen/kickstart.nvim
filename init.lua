@@ -15,13 +15,13 @@ vim.g.have_nerd_font = true
 vim.opt.colorcolumn = '120'
 
 -- Make line numbers default
-vim.opt.number = true
+vim.opt.number = false
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
 
 -- Display the status column with: sign, relative line number, line number, fold column
-vim.opt.statuscolumn = '%s %2r %l %C '
+vim.opt.statuscolumn = '%s %2r %C '
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -69,6 +69,7 @@ vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.opt.cursorline = true
+vim.opt.cursorlineopt = 'number'
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
@@ -146,13 +147,14 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
   { 'tpope/vim-sleuth' }, -- Detect tabstop and shiftwidth automatically
   { 'numToStr/Comment.nvim', opts = {} },
-
+  { 'lukas-reineke/virt-column.nvim', opts = { char = '▏' } },
   require 'plugins.todo-comments',
+  require 'plugins.barbeque',
   require 'plugins.catppuccin',
   require 'plugins.lualine',
   require 'plugins.telescope',
   require 'plugins.lsp-config',
-  require 'plugins.conform',
+  -- require 'plugins.conform',
   require 'plugins.nvim-cmp',
   -- require 'plugins.debug',
   require 'plugins.indent_line',
